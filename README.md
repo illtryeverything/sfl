@@ -58,7 +58,7 @@ See `env.example.txt`. Key settings:
 3. Railway auto-detects the `Dockerfile` and builds.
 4. Add a **Volume** mounted at `/app/data` and set `DATABASE_PATH=/app/data/sfl.db`. This keeps the SQLite file across deploys.
 5. Set all env vars from `env.example.txt` under the service variables.
-6. Deploy. The app exposes port `3000` (Railway maps automatically).
+6. Deploy. The app exposes port `8080` (Railway maps automatically).
 
 ## How it works
 
