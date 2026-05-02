@@ -98,12 +98,27 @@ export function detectEvents(farm: FarmState, now: number = Date.now()): FarmEve
     }
   }
   for (const [type, count] of readyByType) {
-    const bucket = Math.floor(now / (5 * 60_000));
     const localized = RESOURCE_ID[type] ?? type;
+
+    // Notif 1: pertama kali ready (fired sekali saja)
+    const earliestReady = Math.min(
+      ...farm.resources
+        .filter((r) => r.type === type && r.readyAt && r.readyAt <= now)
+        .map((r) => r.readyAt!)
+    );
     events.push({
-      key: `resource:${type}:${bucket}`,
+      key: `resource:${type}:${earliestReady}`,
       kind: "resource_ready",
       message: `⛏️ Master, ${count} ${localized} siap di-harvest!`,
+      at: earliestReady,
+    });
+
+    // Notif 2: reminder setiap 5 jam kalau belum di-harvest
+    const bucket = Math.floor(now / (5 * 60 * 60_000));
+    events.push({
+      key: `resource:${type}:reminder:${bucket}`,
+      kind: "resource_ready",
+      message: `⏰ Permisi Master, Reminder, ${count} ${localized} masih belum di-harvest!`,
       at: now,
     });
   }
